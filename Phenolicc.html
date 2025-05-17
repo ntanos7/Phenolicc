@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>HPLC Chromatogram of Phenolic Compounds in Olive Oil</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #fff;
+        }
+        #chromatogram {
+            width: 100%;
+            max-width: 900px;
+            height: 600px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>HPLC Chromatogram of 15 Phenolic Compounds in Olive Oil</h1>
+    <div id="chromatogram"></div>
+    <script>
+        const retention_time = [2.1, 2.8, 3.3, 3.9, 4.5, 5.1, 5.8, 6.6, 7.4, 8.2, 9.0, 9.8, 10.6, 11.5, 12.3];
+        const intensity = [48, 52, 44, 39, 36, 33, 58, 40, 55, 37, 29, 54, 26, 22, 30];
+        const compound_names = [
+            "Hydroxytyrosol", "Tyrosol", "Vanillic Acid", "Caffeic Acid",
+            "p-Coumaric Acid", "Ferulic Acid", "Oleuropein Aglycone",
+            "Ligstroside Aglycone", "Verbascoside", "Pinoresinol",
+            "Apigenin", "Luteolin", "Rutin", "Quercetin", "Sinapic Acid"
+        ];
+        const categories = [
+            "Phenolic Alcohol", "Phenolic Alcohol", "Phenolic Acid", "Phenolic Acid",
+            "Phenolic Acid", "Phenolic Acid", "Secoiridoid", "Secoiridoid",
+            "Secoiridoid", "Lignan", "Flavonoid", "Flavonoid", "Flavonoid", "Flavonoid", "Phenolic Acid"
+        ];
+        const formulas = [
+            "C8H10O3", "C8H10O2", "C8H8O4", "C9H8O4", "C9H8O3", "C10H10O4",
+            "C25H32O13", "C25H32O12", "C29H36O15", "C20H18O6", "C15H10O5", "C15H10O6",
+            "C27H30O16", "C15H10O7", "C11H12O5"
+        ];
+        const molar_mass = [
+            154.16, 138.16, 168.15, 180.16, 164.16, 194.18,
+            540.51, 526.50, 624.58, 354.35, 270.24, 286.24,
+            610.52, 302.24, 224.21
+        ];
+        const sources = Array(9).fill("Olive Fruit").concat(Array(6).fill("Olive Oil"));
+        const activity = [
+            "High", "Moderate", "Low", "Moderate", "Moderate", "Moderate",
+            "High", "High", "High", "Moderate", "Moderate", "High", "Moderate", "High", "Moderate"
+        ];
+        const bioavailability = [
+            "High", "Moderate", "Low", "Moderate", "Moderate", "Moderate",
+            "Low", "Low", "Low", "Moderate", "Moderate", "High", "Low", "Low", "Moderate"
+        ];
+        const health_benefit = [
+            "Protects LDL from oxidation", "Reduces inflammation", "Minor antioxidant",
+            "Anti-inflammatory", "May support vascular health", "May lower oxidative stress",
+            "Major antioxidant", "Similar to Oleuropein", "Cell protection",
+            "Cardioprotective", "Neuroprotective", "Anti-inflammatory",
+            "Capillary strength", "Strong antioxidant", "Liver protection"
+        ];
+
+        const color_map = {
+            "Phenolic Alcohol": "royalblue",
+            "Phenolic Acid": "crimson",
+            "Secoiridoid": "forestgreen",
+            "Lignan": "darkorange",
+            "Flavonoid": "purple"
+        };
+        const symbol_map = {
+            "Phenolic Alcohol": "circle",
+            "Phenolic Acid": "square",
+            "Secoiridoid": "triangle-up",
+            "Lignan": "diamond",
+            "Flavonoid": "star"
+        };
+
+        const colors = categories.map(cat => color_map[cat]);
+        const symbols = categories.map(cat => symbol_map[cat]);
+        const sizes = activity.map(act => {
+            if (act === "High") return 20;
+            if (act === "Moderate") return 14;
+            return 10;
+        });
+
+        const hover_text = compound_names.map((name, i) => {
+            return `<span style="font-size:14px"><b>${name}</b><br>` +
+                `Category: ${categories[i]}<br>` +
+                `Formula: ${formulas[i]}<br>` +
+                `Molar Mass: ${molar_mass[i]} g/mol<br>` +
+                `Source: ${sources[i]}<br>` +
+                `Antioxidant Activity: ${activity[i]}<br>` +
+                `Bioavailability: ${bioavailability[i]}<br>` +
+                `Health Benefit: ${health_benefit[i]}</span>`;
+        });
+
+        const trace = {
+            x: retention_time,
+            y: intensity,
+            mode: 'markers+lines+text',
+            text: compound_names,
+            textposition: 'top center',
+            textfont: {
+                size: 16,
+                family: "Arial",
+                color: "black"
+            },
+            marker: {
+                size: sizes,
+                color: colors,
+                symbol: symbols,
+                line: {width: 2, color: 'black'},
+                opacity: 0.85
+            },
+            line: {color: 'gray'},
+            hoverinfo: 'text',
+            hovertext: hover_text,
+            type: 'scatter'
+        };
+
+        const layout = {
+            title: "HPLC Chromatogram of 15 Phenolic Compounds in Olive Oil",
+            xaxis: {title: "Retention Time (min)"},
+            yaxis: {title: "Signal Intensity"},
+            hovermode: "closest",
+            margin: {l:40, r:40, t:80, b:40},
+            font: {family: "Arial", size: 14},
+            template: "plotly_white"
+        };
+
+        Plotly.newPlot('chromatogram', [trace], layout);
+    </script>
+</body>
+</html>
